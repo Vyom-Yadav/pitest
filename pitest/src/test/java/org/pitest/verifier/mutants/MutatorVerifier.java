@@ -16,6 +16,10 @@ import org.pitest.simpletest.Transformation;
 import org.pitest.simpletest.TransformingClassLoader;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Collection;
@@ -64,6 +68,27 @@ public class MutatorVerifier {
         return this.engine.findMutations(clazz).stream()
                 .filter(filter)
                 .collect(Collectors.toList());
+    }
+
+    public void createByteCodeFile() throws IOException {
+        List<Mutant> mutants = findMutations().stream()
+            .map(mutationDetails -> this.engine.getMutation(mutationDetails.getId()))
+            .collect(Collectors.toList());
+
+        for (int i = 0; i < mutants.size(); i++) {
+            Mutant mutant = mutants.get(i);
+            final byte[] arr = mutant.getBytes();
+            File file = new File("/home/vyom/Desktop/mutantByteCode/mutant" + i + ".class");
+            if (file.exists()) {
+                new FileOutputStream(file).close();
+            }
+            else {
+                file.createNewFile();
+            }
+            try (FileOutputStream fileOutputStream = new FileOutputStream(file)) {
+                fileOutputStream.write(arr);
+            }
+        }
     }
 
 

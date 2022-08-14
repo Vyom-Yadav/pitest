@@ -36,7 +36,49 @@ public class RemoveSwitchMutatorTest {
 
   MutatorVerifierStart v = MutatorVerifierStart.forMutator(new RemoveSwitchMutator(2))
           .notCheckingUnMutatedValues();
-  
+
+  class a {
+
+      void method(int a) {
+          switch (a) {
+              case 1:
+                  foo1();
+                  break;
+              case 2:
+                  foo2();
+                  break;
+              case 3:
+                  foo3();
+                  break;
+              case 4:
+                  foo4();
+                  break;
+              case 5:
+              case 6:
+              default:
+                  break;
+          }
+      }
+
+      void foo1() {
+      }
+
+      void foo2() {
+      }
+
+      void foo3() {
+      }
+
+      void foo4() {
+      }
+
+  }
+
+  @Test
+  public void createBytecode() throws Exception {
+      v.forClass(a.class).createByteCodeFile();
+  }
+
   @Test
   public void shouldProvideAMeaningfulName() {
     assertEquals("EXPERIMENTAL_REMOVE_SWITCH_MUTATOR_[0-99]",
